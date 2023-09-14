@@ -9,28 +9,39 @@ jobs:
   deploy:
     name: Deploy to Lambda
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14
-    
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Deploy to Lambda
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws lambda create-function \
-          --function-name dev-MyLambdaFunction \
-          --runtime nodejs14.x \
-          --handler index.handler \
-          --role arn:aws:iam::674024469050:role/lambda-cloudformation \
-          --zip-file fileb://./ \
-          --region ap-south-1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies (if any)
+        run: npm install
+
+      - name: Create ZIP file
+        run: |
+          zip -r lambda-function.zip index.js
+          # Add any additional files to the ZIP as needed
+          
+      - name: Deploy to Lambda
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws lambda create-function \
+            --function-name dev-MyLambdaFunction \
+            --runtime nodejs14.x \
+            --handler index.handler \
+            --role arn:aws:iam::your-aws-account-id:role/your-iam-role-name \
+            --zip-file fileb://lambda-function.zip
+            --region your-aws-region
+
+          # Optionally, update the function code if it already exists
+          aws lambda update-function-code \
+            --function-name your-lambda-function-name \
+            --zip-file fileb://lambda-function.zip \
+            --region your-aws-region
