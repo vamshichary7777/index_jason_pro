@@ -1,26 +1,11 @@
-exports.handler = async (event) => {
-  // Lambda function logic here
-  try {
-    // You can process the event object or perform any necessary operations here
-    // For example, you can parse input data from the event or perform some computation
-    
-    // In this sample, we are just returning a "Hello, World!" response
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify('Hello, World!'),
-    };
-    
-    return response;
-  } catch (error) {
-    // Handle any errors that may occur during execution
-    console.error('Error:', error);
-    
-    // Return an error response
-    const response = {
-      statusCode: 500,
-      body: JSON.stringify('An error occurred'),
-    };
-    
-    return response;
+{
+  "name": "lambda-hello-world",
+  "version": "1.0.0",
+  "description": "A simple Lambda function",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
-};
+}
