@@ -19,13 +19,13 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install dependencies (if any)
+      - name: Install dependencies
         run: npm install
 
       - name: Create ZIP file
         run: |
-          zip -r lambda-function.zip index.js
-          # Add any additional files to the ZIP as needed
+          zip -r lambda-function.zip index.js package.json
+          # Include any additional files if needed
           
       - name: Deploy to Lambda
         env:
@@ -37,7 +37,7 @@ jobs:
             --runtime nodejs14.x \
             --handler index.handler \
             --role arn:aws:iam::674024469050:role/lambda-cloudformation \
-            --zip-file fileb://lambda-function.zip
+            --zip-file fileb://lambda-function.zip \
             --region ap-south-1
 
           # Optionally, update the function code if it already exists
