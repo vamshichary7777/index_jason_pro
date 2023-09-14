@@ -36,12 +36,12 @@ jobs:
             --function-name dev-MyLambdaFunction \
             --runtime nodejs14.x \
             --handler index.handler \
-            --role arn:aws:iam::your-aws-account-id:role/your-iam-role-name \
+            --role arn:aws:iam::674024469050:role/lambda-cloudformation \
             --zip-file fileb://lambda-function.zip
-            --region your-aws-region
+            --region ap-south-1
 
           # Optionally, update the function code if it already exists
           aws lambda update-function-code \
             --function-name your-lambda-function-name \
             --zip-file fileb://lambda-function.zip \
-            --region your-aws-region
+            --region ap-south-1
