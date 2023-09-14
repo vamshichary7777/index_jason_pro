@@ -42,6 +42,6 @@ jobs:
 
           # Optionally, update the function code if it already exists
           aws lambda update-function-code \
-            --function-name your-lambda-function-name \
+            --function-name lambda-cloudformation \
             --zip-file fileb://lambda-function.zip \
             --region ap-south-1
