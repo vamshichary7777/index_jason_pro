@@ -1,13 +1,12 @@
-name: Deploy to Existing Lambda
+name: Deploy Lambda Function  # Replace with a descriptive name for your workflow
 
 on:
   push:
     branches:
-      - main
+      - main  # Replace with the name of your main branch if it's different
 
 jobs:
   deploy:
-    name: Deploy to Existing Lambda
     runs-on: ubuntu-latest
 
     steps:
@@ -17,22 +16,39 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '14'
 
-      - name: Install dependencies (if any)
-        run: npm install
-
-      - name: Create ZIP file
+      - name: Build and package Lambda code
         run: |
-          zip -r lambda-function.zip index.js package.json
-          # Include any additional files if needed
+          # Change directory to your Lambda function code directory
+          cd index.js
 
-      - name: Deploy to Existing Lambda
+          # Replace with the appropriate commands to build and package your Lambda code
+          # For example, if it's a Node.js project:
+          npm install
+          npm run build
+
+          # Create a ZIP package of your Lambda code
+          zip -r lambda-package.zip .
+
+        working-directory: index.js # Specify the working directory for this step
+
+      - name: Upload Lambda package to S3
+        uses: aws-actions/aws-cli@v2
+        with:
+          args: s3 cp lambda-package.zip s3://test-cloudformation123/  # Replace with your S3 bucket name
+
+      - name: Deploy Lambda function
+        run: |
+          aws lambda create-function \
+            --function-name dev-MyLambdaFunction \
+            --runtime nodejs14.x \
+            --handler index.handler  # Replace with your Lambda handler
+            --role arn:aws:iam::arn:aws:iam::674024469050:role/lambda-cloudformation  # Replace with your IAM role ARN
+            --code S3Bucket=test-cloudformation123,S3Key=lambda-package.zip  # Replace with your S3 bucket name
+            --environment Variables={MY_ENV_VAR=myvalue}  # Replace with your environment variables
+            --region ap-south-1  # Replace with your AWS region
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          aws lambda update-function-code \
-            --function-name dev-MyLambdaFunction \
-            --zip-file fileb://lambda-function.zip \
-            --region ap-south-1
