@@ -36,7 +36,7 @@ jobs:
       - name: Upload Lambda package to S3
         uses: aws-actions/aws-cli@v2
         with:
-          args: s3 cp lambda-package.zip s3://test-cloudformation123/  # Replace with your S3 bucket name
+          args: s3 cp lambda-package.zip s3://test-cloudformation123/test/  # Replace with your S3 bucket name
 
       - name: Deploy Lambda function
         run: |
@@ -45,7 +45,7 @@ jobs:
             --runtime nodejs14.x \
             --handler index.handler  # Replace with your Lambda handler
             --role arn:aws:iam::arn:aws:iam::674024469050:role/lambda-cloudformation  # Replace with your IAM role ARN
-            --code S3Bucket=test-cloudformation123,S3Key=lambda-package.zip  # Replace with your S3 bucket name
+            --code S3Bucket=s3://test-cloudformation123/test/,S3Key=lambda-package.zip  # Replace with your S3 bucket name
             --environment Variables={MY_ENV_VAR=myvalue}  # Replace with your environment variables
             --region ap-south-1  # Replace with your AWS region
 
