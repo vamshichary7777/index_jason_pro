@@ -1,54 +1,30 @@
-name: Deploy Lambda Function  # Replace with a descriptive name for your workflow
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM Template for a Node.js Lambda function
 
-on:
-  push:
-    branches:
-      - main  # Replace with the name of your main branch if it's different
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name (e.g., prod, dev, stage)
+    Default: stage
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${Env}-MyLambdaFunction'
+      Handler: index.handler
+      Runtime: nodejs14.x
+      CodeUri: ./index.js # Path to your Node.js Lambda function code
+      Timeout: 10  # Maximum execution time in seconds
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref Env
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Build and package Lambda code
-        run: |
-          # Change directory to your Lambda function code directory
-          cd index.js
-
-          # Replace with the appropriate commands to build and package your Lambda code
-          # For example, if it's a Node.js project:
-          npm install
-          npm run build
-
-          # Create a ZIP package of your Lambda code
-          zip -r lambda-package.zip .
-
-        working-directory: index.js # Specify the working directory for this step
-
-      - name: Upload Lambda package to S3
-        uses: aws-actions/aws-cli@v2
-        with:
-          args: s3 cp lambda-package.zip s3://test-cloudformation123/test/  # Replace with your S3 bucket name
-
-      - name: Deploy Lambda function
-        run: |
-          aws lambda create-function \
-            --function-name dev-MyLambdaFunction \
-            --runtime nodejs14.x \
-            --handler index.handler  # Replace with your Lambda handler
-            --role arn:aws:iam::arn:aws:iam::674024469050:role/lambda-cloudformation  # Replace with your IAM role ARN
-            --code S3Bucket=s3://test-cloudformation123/test/,S3Key=lambda-package.zip  # Replace with your S3 bucket name
-            --environment Variables={MY_ENV_VAR=myvalue}  # Replace with your environment variables
-            --region ap-south-1  # Replace with your AWS region
-
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+Outputs:
+  MyLambdaFunctionArn:
+    Description: Lambda Function ARN
+    Value: !GetAtt MyLambdaFunction.Arn
+  MyLambdaFunctionName:
+    Description: Lambda Function Name
+    Value: !Ref MyLambdaFunction
