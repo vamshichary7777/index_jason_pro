@@ -2,7 +2,7 @@ exports.handler = async (event) => {
   try {
     const response = {
       statusCode: 200,
-      body: JSON.stringify('Hello,now you are able to see the page.....!'),
+      body: JSON.stringify('Hello,now you are able to see the page.....hi!'),
     };
     return response;
   } catch (error) {
